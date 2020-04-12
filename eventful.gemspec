@@ -31,4 +31,5 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "pg"
   spec.add_development_dependency "annotate"
+  spec.add_development_dependency "factory_bot_rails"
 end
