@@ -4,8 +4,8 @@
 #
 #  id           :bigint           not null, primary key
 #  action       :string           default(""), not null
-#  associations :jsonb            not null
-#  data         :jsonb            not null
+#  associations :jsonb
+#  data         :jsonb
 #  description  :string           default(""), not null
 #  resource     :string           default(""), not null
 #  created_at   :datetime         not null
@@ -21,6 +21,17 @@
 #  index_eventful_events_on_resource      (resource)
 #
 module Eventful
+  # Represent an Event
+  #
+  # Assumptions:
+  # + Related records are on conventionally set up tables
+  # + :data will only be queried by top-level keys
   class Event < ApplicationRecord
+    serialize :data, HashSerializer
+    serialize :associations, HashSerializer
+
+    validates :resource, presence: true
+    validates :action, presence: true
+    validates :description, presence: true
   end
 end

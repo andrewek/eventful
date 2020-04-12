@@ -5,8 +5,8 @@ class CreateEventfulEvents < ActiveRecord::Migration[6.0]
       t.string :description, null: false, default: ""
       t.string :resource, null: false, default: ""
       t.string :action, null: false, default: ""
-      t.jsonb :associations, null: false, default: "{}"
-      t.jsonb :data, null: false, default: "{}"
+      t.jsonb :associations, default: "{}"
+      t.jsonb :data, default: "{}"
 
       t.timestamps
     end

@@ -4,8 +4,8 @@
 #
 #  id           :bigint           not null, primary key
 #  action       :string           default(""), not null
-#  associations :jsonb            not null
-#  data         :jsonb            not null
+#  associations :jsonb
+#  data         :jsonb
 #  description  :string           default(""), not null
 #  resource     :string           default(""), not null
 #  created_at   :datetime         not null
@@ -24,8 +24,66 @@ require 'test_helper'
 
 module Eventful
   class EventTest < ActiveSupport::TestCase
-    # test "the truth" do
-    #   assert true
-    # end
+    describe "#data" do
+      it "serializes as a hash with symbol keys" do
+        e = Event.create!(
+          description: "wombat created",
+          resource: "wombat",
+          action: "created",
+          data: {
+            "foo" => "bar",
+          },
+          associations: {},
+        )
+
+        assert_includes(e.data.keys, :foo)
+      end
+    end
+
+    describe "#associations" do
+      it "serializes as a hash with symbol keys" do
+        e = Event.create!(
+          description: "wombat created",
+          resource: "wombat",
+          action: "created",
+          data: {},
+          associations: {
+            "wombat_id" => 3,
+          },
+        )
+
+        assert_includes(e.associations.keys, :wombat_id)
+      end
+    end
+
+    describe "#new" do
+      it "is invalid without a description" do
+        e = Event.new(description: "")
+        refute(e.valid?)
+        assert_includes(e.errors[:description], "can't be blank")
+      end
+
+      it "is invalid without a resource" do
+        e = Event.new(resource: "")
+        refute(e.valid?)
+        assert_includes(e.errors[:resource], "can't be blank")
+      end
+
+      it "is invalid without an action" do
+        e = Event.new(action: "")
+        refute(e.valid?)
+        assert_includes(e.errors[:action], "can't be blank")
+      end
+
+      it "defaults to empty data" do
+        e = Event.new
+        assert_equal(e.data, {})
+      end
+
+      it "defaults to empty associations" do
+        e = Event.new
+        assert_equal(e.associations, {})
+      end
+    end
   end
 end

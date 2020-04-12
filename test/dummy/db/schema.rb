@@ -20,8 +20,8 @@ ActiveRecord::Schema.define(version: 2020_04_12_190233) do
     t.string "description", default: "", null: false
     t.string "resource", default: "", null: false
     t.string "action", default: "", null: false
-    t.jsonb "associations", default: "{}", null: false
-    t.jsonb "data", default: "{}", null: false
+    t.jsonb "associations", default: "{}"
+    t.jsonb "data", default: "{}"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["action"], name: "index_eventful_events_on_action"
