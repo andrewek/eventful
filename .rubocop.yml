@@ -1,0 +1,64 @@
+AllCops:
+  Exclude:
+    - "config/routes.rb"
+    - "bin/**/*"
+    - "lib/**/*"
+    - "db/**/*"
+    - "node_modules/**/*"
+
+Style/StringLiterals:
+  EnforcedStyle: "double_quotes"
+
+Naming/VariableNumber:
+  EnforcedStyle: "snake_case"
+
+Metrics/LineLength:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
+
+Style/WordArray:
+  EnforcedStyle: "brackets"
+
+Style/NumericLiterals:
+  Enabled: false
+
+Style/SingleLineMethods:
+  AllowIfMethodIsEmpty: false
+
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: "comma"
+
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: "comma"
+
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: "comma"
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
+Style/MultilineBlockChain:
+  Enabled: false
+
+Style/DoubleNegation:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Metrics/PerceivedComplexity:
+  Enabled: false
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+Style/InfiniteLoop:
+  Enabled: false
+
+Style/EmptyMethod:
+  EnforcedStyle: "expanded"
