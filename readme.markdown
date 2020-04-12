@@ -30,6 +30,10 @@ Or install it yourself as:
 $ gem install eventful
 ```
 
+## Running Tests
+
+You can run all tests with `$ bin/rails test`
+
 ## Contributing
 
 We welcome pull requests. This is a free library, so feature requests will be
