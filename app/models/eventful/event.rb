@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: eventful_events
@@ -34,13 +36,16 @@ module Eventful
   class Event < ApplicationRecord
     include Eventful::Parentable
     include Eventful::Rootable
-
-    serialize :data, HashSerializer
-    serialize :associations, HashSerializer
+    include Eventful::DataSearchable
+    include Eventful::AssociationSearchable
+    include Eventful::Serializable
 
     validates :resource, presence: true
     validates :action, presence: true
     validates :description, presence: true
     validates :occurred_at, presence: true
+
+    scope :by_resource, ->(*resources) { where(resource: resources) }
+    scope :by_action, ->(*actions) { where(action: actions) }
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -11,7 +13,6 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema.define(version: 2020_04_12_201036) do
-
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -20,8 +21,8 @@ ActiveRecord::Schema.define(version: 2020_04_12_201036) do
     t.string "description", default: "", null: false
     t.string "resource", default: "", null: false
     t.string "action", default: "", null: false
-    t.jsonb "associations", default: "{}"
-    t.jsonb "data", default: "{}"
+    t.jsonb "associations", default: {}
+    t.jsonb "data", default: {}
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.datetime "occurred_at"
@@ -32,5 +33,4 @@ ActiveRecord::Schema.define(version: 2020_04_12_201036) do
     t.index ["parent_id"], name: "index_eventful_events_on_parent_id"
     t.index ["resource"], name: "index_eventful_events_on_resource"
   end
-
 end

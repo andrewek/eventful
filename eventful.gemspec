@@ -27,9 +27,9 @@ Gem::Specification.new do |spec|
 
   spec.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "readme.markdown"]
 
+  spec.add_dependency "pg"
   spec.add_dependency "rails", "~> 6.0.2", ">= 6.0.2.2"
 
-  spec.add_development_dependency "pg"
   spec.add_development_dependency "annotate"
   spec.add_development_dependency "factory_bot_rails"
 end

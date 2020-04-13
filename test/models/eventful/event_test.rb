@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: eventful_events
@@ -22,10 +24,190 @@
 #  index_eventful_events_on_parent_id     (parent_id)
 #  index_eventful_events_on_resource      (resource)
 #
-require 'test_helper'
+require "test_helper"
 
 module Eventful
   class EventTest < ActiveSupport::TestCase
+    extend Minitest::Spec::DSL
+
+    before(:all) do
+      Eventful::Event.destroy_all
+    end
+
+    describe ".by_resource" do
+      it "matches one resource" do
+        matching_event = FactoryBot.create(
+          :event,
+          resource: "echidna",
+        )
+
+        FactoryBot.create(
+          :event,
+          resource: "wallaby",
+        )
+
+        result = Eventful::Event.by_resource("echidna")
+
+        assert_equal([matching_event], result)
+      end
+
+      it "matches many resources" do
+        matching_event_1 = FactoryBot.create(
+          :event,
+          resource: "echidna",
+        )
+
+        matching_event_2 = FactoryBot.create(
+          :event,
+          resource: "echidna",
+        )
+
+        matching_event_3 = FactoryBot.create(
+          :event,
+          resource: "wallaby",
+        )
+
+        result = Eventful::Event.by_resource("echidna", "wallaby")
+
+        assert_includes(result, matching_event_1)
+        assert_includes(result, matching_event_2)
+        assert_includes(result, matching_event_3)
+      end
+    end
+
+    describe ".by_action" do
+      it "matches one action" do
+        matching_event = FactoryBot.create(
+          :event,
+          action: "witnessed",
+        )
+
+        FactoryBot.create(
+          :event,
+          action: "seen",
+        )
+
+        result = Eventful::Event.by_action("witnessed")
+
+        assert_equal([matching_event], result)
+      end
+
+      it "matches many actions" do
+        matching_event_1 = FactoryBot.create(
+          :event,
+          action: "witnessed",
+        )
+
+        matching_event_2 = FactoryBot.create(
+          :event,
+          action: "witnessed",
+        )
+
+        matching_event_3 = FactoryBot.create(
+          :event,
+          action: "seen",
+        )
+
+        result = Eventful::Event.by_action("witnessed", "seen")
+
+        assert_includes(result, matching_event_1)
+        assert_includes(result, matching_event_2)
+        assert_includes(result, matching_event_3)
+      end
+    end
+
+    describe ".by_association" do
+      it "matches by integer ID" do
+        matching_event = FactoryBot.create(
+          :event,
+          associations: {
+            wombat_id: 7,
+          },
+        )
+
+        FactoryBot.create(
+          :event,
+          associations: {
+            wombat_id: 18,
+          },
+        )
+
+        result = Eventful::Event.by_association(:wombat_id, 7)
+
+        assert_equal([matching_event], result)
+      end
+
+      it "matches by UUID" do
+        match_id = SecureRandom.uuid
+        matching_event = FactoryBot.create(
+          :event,
+          associations: {
+            wombat_id: match_id,
+          },
+        )
+
+        FactoryBot.create(
+          :event,
+          associations: {
+            wombat_id: SecureRandom.uuid,
+          },
+        )
+
+        result = Eventful::Event.by_association(:wombat_id, match_id)
+
+        assert_equal([matching_event], result)
+      end
+    end
+
+    describe ".by_data" do
+      it "queries events by data" do
+        matching_event = FactoryBot.create(
+          :event,
+          data: { "asdf" => "jkl" },
+        )
+
+        FactoryBot.create(
+          :event,
+          data: { "asdf" => "asdf" },
+        )
+        result = Eventful::Event.by_data("asdf", "jkl")
+
+        assert_equal([matching_event], result)
+      end
+
+      it "queries with symbolic keys" do
+        matching_event = FactoryBot.create(
+          :event,
+          data: { "asdf" => "jkl" },
+        )
+
+        FactoryBot.create(
+          :event,
+          data: { "asdf" => "asdf" },
+        )
+
+        result = Eventful::Event.by_data(:asdf, "jkl")
+
+        assert_equal([matching_event], result)
+      end
+
+      it "can be chained" do
+        matching_event = FactoryBot.create(
+          :event,
+          data: { "asdf" => "jkl", "jkl" => "qwer" },
+        )
+
+        FactoryBot.create(
+          :event,
+          data: { "asdf" => "jkl" },
+        )
+
+        result = Eventful::Event.by_data(:asdf, "jkl").by_data(:jkl, "qwer")
+
+        assert_equal([matching_event], result)
+      end
+    end
+
     describe "#data" do
       it "serializes as a hash with symbol keys" do
         e = FactoryBot.create(
@@ -76,7 +258,7 @@ module Eventful
       it "is true with no root id" do
         event = FactoryBot.build(
           :event,
-          root: nil
+          root: nil,
         )
 
         assert(event.root?)
@@ -85,7 +267,7 @@ module Eventful
       it "is false with a root" do
         event = FactoryBot.build(
           :event,
-          root: FactoryBot.create(:event)
+          root: FactoryBot.create(:event),
         )
 
         refute(event.root?)
@@ -96,7 +278,7 @@ module Eventful
       it "returns nil if root event" do
         event = FactoryBot.build(
           :event,
-          root: nil
+          root: nil,
         )
 
         assert_nil(event.root)
@@ -107,7 +289,7 @@ module Eventful
 
         event = FactoryBot.build(
           :event,
-          root: root_event
+          root: root_event,
         )
 
         assert_equal(root_event, event.root)
@@ -118,7 +300,7 @@ module Eventful
       it "is self with no root id" do
         event = FactoryBot.build(
           :event,
-          root: nil
+          root: nil,
         )
 
         assert_equal(event, event.calculated_root)
@@ -129,7 +311,7 @@ module Eventful
 
         event = FactoryBot.build(
           :event,
-          root: root_event
+          root: root_event,
         )
 
         assert_equal(root_event, event.calculated_root)

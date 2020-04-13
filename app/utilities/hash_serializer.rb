@@ -5,10 +5,16 @@
 # access.
 class HashSerializer
   def self.dump(hsh)
-    (hsh || {}).to_json
+    hsh
   end
 
   def self.load(hsh)
-    JSON.parse((hsh || "{}"), symbolize_names: true)
+    if hsh.nil?
+      {}
+    elsif hsh.is_a?(Hash)
+      hsh.deep_symbolize_keys
+    else
+      JSON.parse(hsh, symbolize_names: true)
+    end
   end
 end

@@ -8,7 +8,106 @@ Eventful is free to use, and 100% unsupported except at my own leisure.
 
 ## Usage
 
-How to use my plugin.
+An `Eventful::Event` has the following fields:
+
++ `resource` - this is the kind of domain object we're working with
++ `action` - this is what we did to it
++ `data` - here's an arbitrary JSON (hash) payload
++ `associations` - Any associations that might exist
++ `occurred_at` - DateTime - when did this happen?
++ `description` - Human-readable description
+
+An example:
+
+```ruby
+e = Eventful::Event.new(
+  resource: "wombat",
+  action: "created",
+  data: {
+    some: "data",
+  },
+  associations: {
+    wombat_id: 7,
+    user_id: 23,
+  },
+  occurred_at: 1.day.ago,
+  description: "Wombat created by Andrew Ek",
+)
+```
+
+We rarely want to make events directly. It's much easier to use the Event
+constructor:
+
+```ruby
+Eventful.construct_event(
+  resource: "wombat",
+  action: "created",
+  data: {
+    some: "data",
+  },
+  associations: [my_wombat_record, my_user_record],
+  occurred_at: 1.day.ago,
+  description: "Wombat created by Andrew Ek",
+)
+```
+
+So we can write events. We can also query them:
+
+```ruby
+
+Eventful::Event.by_resource("wombat")
+#=> Events with a resource of "wombat"
+
+
+Eventful::Event.by_resource("wombat", "echidna")
+#=> All Events with a resource of either "wombat" or "echidna")
+
+Eventful::Event.by_action("created")
+#=> Events with an action of "created"
+
+Eventful::Event.by_action("created", "updated")
+#=> Events with an action of "created" or "updated"
+
+Eventful::Events.by_data(:some_key, "some value")
+#=> Events where data includes a top level :some_key and a value of "some value"
+
+Eventful::Events.by_association(:wombat_id, 7)
+#=> Events for Wombat with ID 7
+```
+
+These queries are chainable:
+
+```ruby
+Eventful::Events.by_resource("wombat").by_action("created")
+```
+
+We also have can add some nice helper methods available (on demand) through
+`Eventful::Associable`. Typically you'll include this per-model, rather than for
+everything.
+
+```ruby
+class Wombat < ApplicationRecord
+  include Eventful::Associable
+end
+```
+
+Assuming the above setup, we can do the following:
+
+```ruby
+Wombat.events
+#=> All events with a resource of "wombat"
+
+w = Wombat.find(7)
+w.events
+#=> All events with an association to this particular Wombat record
+```
+
+These queries are also chainable:
+
+```ruby
+Wombat.events.by_action("created")
+#=> All Wombat-Created events
+```
 
 ## Installation
 
