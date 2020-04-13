@@ -44,7 +44,7 @@ class Eventful::Test < ActiveSupport::TestCase
         resource: "wombat",
         action: "fed",
         description: "Wombat fed",
-        data: { foo: "bar" }
+        data: { foo: "bar" },
       )
 
       assert(result.persisted?)
@@ -94,7 +94,6 @@ class Eventful::Test < ActiveSupport::TestCase
     end
 
     it "sets a root appropriately" do
-
     end
 
     it "returns an invalid record" do
