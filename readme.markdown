@@ -114,7 +114,7 @@ Wombat.events.by_action("created")
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'eventful'
+gem 'eventful', git: "https://github.com/andrewek/eventful.git"
 ```
 
 And then execute:
@@ -123,11 +123,30 @@ And then execute:
 $ bundle
 ```
 
-Or install it yourself as:
+You'll still need to run migrations to have access to the events table:
 
 ```bash
-$ gem install eventful
+$ rails eventful:install:migrations
 ```
+
+Then run:
+
+```bash
+$ rails db:migrate
+```
+
+You can test this in the Rails console:
+
+```ruby
+Eventful::Event.all
+#=> []
+```
+
+From there, it should be a simple matter of adding `include
+Eventful::Associable` to your models, and otherwise working with the exposed
+public API.
+
+You can add functionality by monkey-patching any of a number of modules.
 
 ## Running Tests
 
