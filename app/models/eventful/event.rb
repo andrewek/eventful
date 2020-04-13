@@ -32,6 +32,9 @@ module Eventful
   # We do not make events directly, and instead go through the provided service
   # object.
   class Event < ApplicationRecord
+    include Eventful::Parentable
+    include Eventful::Rootable
+
     serialize :data, HashSerializer
     serialize :associations, HashSerializer
 
@@ -39,21 +42,5 @@ module Eventful
     validates :action, presence: true
     validates :description, presence: true
     validates :occurred_at, presence: true
-
-    belongs_to :parent, class_name: "Eventful::Event", optional: true
-    belongs_to :root, class_name: "Eventful::Event", optional: true
-    has_many :children, class_name: "Eventful::Event", foreign_key: :parent_id
-    has_many :progeny, class_name: "Eventful::Event", foreign_key: :root_id
-
-    # An Event is a root event if it has no parents
-    def root?
-      root_id.nil?
-    end
-
-    # An event can be its own root, but we nix the foreign key to keep from
-    # having an infinite cycle of queries.
-    def calculated_root
-      root || self
-    end
   end
 end

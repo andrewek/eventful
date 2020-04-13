@@ -92,6 +92,28 @@ module Eventful
       end
     end
 
+    describe "#root" do
+      it "returns nil if root event" do
+        event = FactoryBot.build(
+          :event,
+          root: nil
+        )
+
+        assert_nil(event.root)
+      end
+
+      it "returns root if one exists" do
+        root_event = FactoryBot.create(:event)
+
+        event = FactoryBot.build(
+          :event,
+          root: root_event
+        )
+
+        assert_equal(root_event, event.root)
+      end
+    end
+
     describe "#calculated_root" do
       it "is self with no root id" do
         event = FactoryBot.build(
@@ -120,6 +142,41 @@ module Eventful
         progeny = FactoryBot.create(:event, root: root_event)
 
         assert_includes(root_event.progeny, progeny)
+      end
+
+      it "returns an empty array if no progeny exist" do
+        event = FactoryBot.create(:event)
+        assert(event.progeny.empty?)
+      end
+    end
+
+    describe "#parent" do
+      it "fetches a parent if one exists" do
+        parent_event = FactoryBot.create(:event)
+        child = FactoryBot.build(:event, parent: parent_event)
+
+        assert_equal(parent_event, child.parent)
+      end
+
+      it "returns nil if no parent exists" do
+        event = FactoryBot.build(:event)
+
+        assert_nil(event.parent)
+      end
+    end
+
+    describe "#children" do
+      it "returns all children if any exist" do
+        parent_event = FactoryBot.create(:event)
+        child = FactoryBot.create(:event, parent: parent_event)
+
+        assert_equal([child], parent_event.children)
+      end
+
+      it "returns an empty collection if none exist" do
+        event = FactoryBot.create(:event)
+
+        assert(event.children.empty?)
       end
     end
 
